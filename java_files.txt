@@ -1,0 +1,16 @@
+src/main/java/com/chatbot/ui/RegisterFrame.java
+src/main/java/com/chatbot/ui/ChatHistoryDialog.java
+src/main/java/com/chatbot/ui/MainFrame.java
+src/main/java/com/chatbot/ui/LoginFrame.java
+src/main/java/com/chatbot/ui/SettingsDialog.java
+src/main/java/com/chatbot/ui/components/ModernScrollBarUI.java
+src/main/java/com/chatbot/ui/components/ModernTextField.java
+src/main/java/com/chatbot/ui/components/ChatPanel.java
+src/main/java/com/chatbot/ui/components/ModernButton.java
+src/main/java/com/chatbot/service/VoiceService.java
+src/main/java/com/chatbot/service/GeminiService.java
+src/main/java/com/chatbot/Main.java
+src/main/java/com/chatbot/database/DatabaseManager.java
+src/main/java/com/chatbot/model/User.java
+src/main/java/com/chatbot/model/ChatMessage.java
+src/main/java/com/chatbot/util/PasswordUtil.java

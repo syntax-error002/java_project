@@ -58,8 +58,6 @@ public class DatabaseManager {
         String createSettingsTable = """
             CREATE TABLE IF NOT EXISTS user_settings (
                 user_id INTEGER PRIMARY KEY,
-                voice_enabled BOOLEAN DEFAULT true,
-                voice_speed REAL DEFAULT 1.0,
                 theme TEXT DEFAULT 'dark',
                 FOREIGN KEY (user_id) REFERENCES users (id)
             )
@@ -193,14 +191,13 @@ public class DatabaseManager {
         }
     }
     
-    public void updateUserSettings(int userId, boolean voiceEnabled, double voiceSpeed) {
-        String sql = "UPDATE user_settings SET voice_enabled = ?, voice_speed = ? WHERE user_id = ?";
+    public void updateUserSettings(int userId, String theme) {
+        String sql = "UPDATE user_settings SET theme = ? WHERE user_id = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setBoolean(1, voiceEnabled);
-            pstmt.setDouble(2, voiceSpeed);
-            pstmt.setInt(3, userId);
+            pstmt.setString(1, theme);
+            pstmt.setInt(2, userId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -217,35 +214,23 @@ public class DatabaseManager {
             
             if (rs.next()) {
                 return new UserSettings(
-                    rs.getBoolean("voice_enabled"),
-                    rs.getDouble("voice_speed"),
                     rs.getString("theme")
                 );
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return new UserSettings(true, 1.0, "dark"); // Default settings
+        return new UserSettings("dark"); // Default settings
     }
     
     public static class UserSettings {
-        private boolean voiceEnabled;
-        private double voiceSpeed;
         private String theme;
         
-        public UserSettings(boolean voiceEnabled, double voiceSpeed, String theme) {
-            this.voiceEnabled = voiceEnabled;
-            this.voiceSpeed = voiceSpeed;
+        public UserSettings(String theme) {
             this.theme = theme;
         }
         
         // Getters and setters
-        public boolean isVoiceEnabled() { return voiceEnabled; }
-        public void setVoiceEnabled(boolean voiceEnabled) { this.voiceEnabled = voiceEnabled; }
-        
-        public double getVoiceSpeed() { return voiceSpeed; }
-        public void setVoiceSpeed(double voiceSpeed) { this.voiceSpeed = voiceSpeed; }
-        
         public String getTheme() { return theme; }
         public void setTheme(String theme) { this.theme = theme; }
     }

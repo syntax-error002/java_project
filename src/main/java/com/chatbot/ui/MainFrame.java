@@ -2,7 +2,6 @@ package com.chatbot.ui;
 
 import com.chatbot.model.User;
 import com.chatbot.service.GeminiService;
-import com.chatbot.service.VoiceService;
 import com.chatbot.database.DatabaseManager;
 import com.chatbot.ui.components.ChatPanel;
 import com.chatbot.ui.components.ModernButton;
@@ -15,22 +14,18 @@ import java.awt.event.WindowEvent;
 public class MainFrame extends JFrame {
     private User currentUser;
     private GeminiService geminiService;
-    private VoiceService voiceService;
     private ChatPanel chatPanel;
     private JTextField messageField;
     private ModernButton sendButton;
-    private ModernButton voiceButton;
     private ModernButton historyButton;
     private ModernButton settingsButton;
     private ModernButton logoutButton;
     
     public MainFrame(User user) {
         this.currentUser = user;
-        this.voiceService = new VoiceService();
         
         // Initialize Gemini service with API key
-        // In a real application, you would get this from configuration or environment
-        String apiKey = System.getProperty("GEMINI_API_KEY", "your-api-key-here");
+        String apiKey = System.getProperty("GEMINI_API_KEY", "AIzaSyC0EzWTrpHU4Wy9FdusyiGFro08nDz5y24");
         this.geminiService = new GeminiService(apiKey);
         
         initializeComponents();
@@ -53,8 +48,6 @@ public class MainFrame extends JFrame {
         messageField.setCaretColor(Color.WHITE);
         
         sendButton = new ModernButton("Send", new Color(0, 123, 255));
-        voiceButton = new ModernButton("🎤", new Color(220, 53, 69));
-        voiceButton.setPreferredSize(new Dimension(50, 40));
         
         historyButton = new ModernButton("History", new Color(108, 117, 125));
         settingsButton = new ModernButton("Settings", new Color(108, 117, 125));
@@ -94,7 +87,6 @@ public class MainFrame extends JFrame {
         JPanel messagePanel = new JPanel(new BorderLayout(10, 0));
         messagePanel.setOpaque(false);
         messagePanel.add(messageField, BorderLayout.CENTER);
-        messagePanel.add(voiceButton, BorderLayout.EAST);
         
         inputPanel.add(messagePanel, BorderLayout.CENTER);
         inputPanel.add(sendButton, BorderLayout.EAST);
@@ -106,8 +98,6 @@ public class MainFrame extends JFrame {
         sendButton.addActionListener(e -> sendMessage());
         messageField.addActionListener(e -> sendMessage());
         
-        voiceButton.addActionListener(e -> toggleVoiceInput());
-        
         historyButton.addActionListener(e -> showChatHistory());
         settingsButton.addActionListener(e -> showSettings());
         logoutButton.addActionListener(e -> handleLogout());
@@ -116,9 +106,6 @@ public class MainFrame extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if (voiceService.isRecording()) {
-                    voiceService.stopRecording();
-                }
                 System.exit(0);
             }
         });
@@ -157,32 +144,7 @@ public class MainFrame extends JFrame {
             // Re-enable send button
             sendButton.setEnabled(true);
             sendButton.setText("Send");
-            
-            // Speak response if voice is enabled
-            DatabaseManager.UserSettings settings = DatabaseManager.getInstance().getUserSettings(currentUser.getId());
-            if (settings.isVoiceEnabled()) {
-                voiceService.speakText(response, settings.getVoiceSpeed());
-            }
         });
-    }
-    
-    private void toggleVoiceInput() {
-        if (voiceService.isRecording()) {
-            voiceService.stopRecording();
-            voiceButton.setText("🎤");
-            voiceButton.setBackground(new Color(220, 53, 69));
-        } else {
-            voiceButton.setText("⏹");
-            voiceButton.setBackground(new Color(40, 167, 69));
-            
-            voiceService.startRecording().thenAccept(text -> {
-                SwingUtilities.invokeLater(() -> {
-                    messageField.setText(text);
-                    voiceButton.setText("🎤");
-                    voiceButton.setBackground(new Color(220, 53, 69));
-                });
-            });
-        }
     }
     
     private void showChatHistory() {
@@ -202,9 +164,6 @@ public class MainFrame extends JFrame {
         );
         
         if (result == JOptionPane.YES_OPTION) {
-            if (voiceService.isRecording()) {
-                voiceService.stopRecording();
-            }
             dispose();
             SwingUtilities.invokeLater(() -> {
                 new LoginFrame().setVisible(true);
