@@ -24,3 +24,5 @@ public class Main {
         });
     }
 }
+
+//java is not good right now
