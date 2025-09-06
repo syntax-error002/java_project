@@ -2,6 +2,8 @@ package com.chatbot.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -26,18 +28,24 @@ public class GeminiService {
             HttpPost post = new HttpPost(API_URL + "?key=" + apiKey);
             post.setHeader("Content-Type", "application/json");
 
-            // Create request body
-            String requestBody = String.format("""
-                {
-                    "contents": [{
-                        "parts": [{
-                            "text": "%s"
-                        }]
-                    }]
-                }
-                """, message.replace(""", "\""));
+            // Create request body using ObjectMapper
+            ObjectNode textPart = objectMapper.createObjectNode();
+            textPart.put("text", message);
 
-            post.setEntity(new StringEntity(requestBody));
+            ArrayNode partsArray = objectMapper.createArrayNode();
+            partsArray.add(textPart);
+
+            ObjectNode contentNode = objectMapper.createObjectNode();
+            contentNode.set("parts", partsArray);
+
+            ArrayNode contentsArray = objectMapper.createArrayNode();
+            contentsArray.add(contentNode);
+
+            ObjectNode requestBody = objectMapper.createObjectNode();
+            requestBody.set("contents", contentsArray);
+
+            String requestBodyString = objectMapper.writeValueAsString(requestBody);
+            post.setEntity(new StringEntity(requestBodyString, "UTF-8"));
 
             try (CloseableHttpResponse response = client.execute(post)) {
                 String responseBody = EntityUtils.toString(response.getEntity());

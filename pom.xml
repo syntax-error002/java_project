@@ -4,18 +4,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+
     <groupId>com.chatbot</groupId>
     <artifactId>ai-chatbot</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
-    
+
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>21</maven.compiler.release>
     </properties>
-    
+
     <dependencies>
         <!-- JSON processing -->
         <dependency>
@@ -23,36 +22,22 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.15.2</version>
         </dependency>
-        
+
         <!-- HTTP client -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.14</version>
+            <version>4.5.13</version>
         </dependency>
-        
-        <!-- SQLite database -->
+
+        <!-- SQLite JDBC Driver -->
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.42.0.0</version>
-        </dependency>
-        
-        <!-- FlatLaf for modern look and feel -->
-        <dependency>
-            <groupId>com.formdev</groupId>
-            <artifactId>flatlaf</artifactId>
-            <version>3.2.5</version>
-        </dependency>
-        
-        <!-- FlatLaf extras for additional components -->
-        <dependency>
-            <groupId>com.formdev</groupId>
-            <artifactId>flatlaf-extras</artifactId>
-            <version>3.2.5</version>
+            <version>3.41.2.2</version>
         </dependency>
     </dependencies>
-    
+
     <build>
         <plugins>
             <plugin>
@@ -60,11 +45,10 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <source>21</source>
-                    <target>21</target>
+                    <release>21</release>
                 </configuration>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
