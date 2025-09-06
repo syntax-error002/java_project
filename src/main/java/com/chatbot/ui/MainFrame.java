@@ -133,17 +133,23 @@ public class MainFrame extends JFrame {
         
         // Process message in background
         SwingUtilities.invokeLater(() -> {
-            String response = geminiService.generateResponse(message);
-            
-            // Add AI response to chat
-            chatPanel.addMessage(response, false);
-            
-            // Save to database
-            DatabaseManager.getInstance().saveChatMessage(currentUser.getId(), message, response);
-            
-            // Re-enable send button
-            sendButton.setEnabled(true);
-            sendButton.setText("Send");
+            try {
+                String response = geminiService.generateResponse(message);
+                
+                // Add AI response to chat
+                chatPanel.addMessage(response, false);
+                
+                // Save to database
+                DatabaseManager.getInstance().saveChatMessage(currentUser.getId(), message, response);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                // Optionally, show an error message to the user
+                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "API Error", JOptionPane.ERROR_MESSAGE);
+            } finally {
+                // Re-enable send button
+                sendButton.setEnabled(true);
+                sendButton.setText("Send");
+            }
         });
     }
     
